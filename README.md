@@ -1,4 +1,4 @@
-#KatScan
+# KatScan
 
 ### Write timestamped logs, exceptions, stack traces, or any form of text to a file for Android debugging purposes.
 - Simple single parameter one liners to write stack traces or messages to user defined directories/files.
