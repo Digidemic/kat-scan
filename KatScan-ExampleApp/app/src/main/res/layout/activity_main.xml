@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/topText"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:text="Press the button below to run the following code"/>
+
+
+    <ScrollView
+        android:layout_above="@+id/btnLayout"
+        android:layout_below="@+id/topText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/codeRan"
+            android:textSize="12sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/btnLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:weightSum="3"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/btnPathOpen"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:onClick="openPath"
+            android:textSize="11sp"
+            android:visibility="gone"
+            android:layout_weight="1"
+            android:text="Open Results Directory using a File Viewer"/>
+
+        <Button
+            android:id="@+id/btnRunCodeAgain"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:onClick="runExample"
+            android:textSize="11sp"
+            android:layout_weight="2"
+            android:text="Run Example Code"/>
+    </LinearLayout>
+</RelativeLayout>
