@@ -115,7 +115,7 @@ public class MiscForRunningDemo extends Activity{
             "   Kat.scan(exception, \"Exception stack trace with this custom message written to default file.\");\n" +
             "\n" +
             "   //Or even have everything written to a new directory & file KatScan creates if does not already exist\n" +
-            "   Kat.scan(\"/Errors/log.txt\", exception, \"Exception stack trace with this custom message written to new subdirectory and file.\");\n" +
+            "   Kat.scan(\"/Errors/log\", exception, \"Exception stack trace with this custom message written to new subdirectory and file.\");\n" +
             "}\n" +
             "\n" +
             "//Dozens of configurable settings that can be updated at run-time\n" +
