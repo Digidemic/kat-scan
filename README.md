@@ -1,13 +1,16 @@
 # KatScan
 
 ### Write timestamped logs, exceptions, stack traces, or any form of text to a file for Android debugging purposes.
-- Simple single parameter one liners to write stack traces or messages to user defined directories/files.
-- Released apps and APKs automatically disable KatScan (no need to comment out or delete for release).
-- Single file, `Kat.java`, that can be copied/pasted directly into an Android project or import the `katscan.aar` to use.
-- Ready to use out of the box and fully configurable for customization.
+- Simple single parameter one liners to write stack traces or messages to user defined directories/files and/or Logcat (Logcat only displays for debug builds).
+- Released apps and APKs automatically disable KatScan by default (no need to comment out or delete for release builds).
+- Ready to use out of the box yet fully customizable.
 - Compatible with every Android version API 4 (Android 1.6, Donut) and higher.
-<br><br>
-![](images/example1.png)
+  <br><br>
+  ![](images/example1.png)
+
+### Check out the [example app for KatScan](/example-katscan/)!
+
+<br>
 
 ## Table of Contents
 - [Examples](#examples)
@@ -17,14 +20,11 @@
 - [License](#license)
 
 ## Examples
-- The results of running this sample code can be seen in the screenshot below.
-The following briefly demonstrates the setup and type of calls that can be made using KatScan. 
-- This sample code is also found and can be ran in this repo's example project, `/KatScan-ExampleApp/` using Android Studio.
-```java
-//PERMISSION ADDED TO MANIFEST: <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+#### The following [sample code](/example-katscan/) and screenshot output briefly demonstrates the setup and type of calls that can be made using KatScan.
 
+```java
 //Only pre-req call needed and only called once for the entirety of the application life!
-Kat.setup(this, true);//Context and if should write to
+Kat.setup(this); //" this" being Activity
 
 //Pass in variables, exceptions, custom messages, or any form of text for KatScan to output to a separate file.
 Kat.scan("Setup complete, This custom message written and time stamped to default file/directory:" +
@@ -54,79 +54,69 @@ Kat.scan("This custom message was written using a new thread.");
 ```
 ![](images/example2.png)
 
+<br>
 
 ## Installation
->Clone the KatScan repo to your local machine using `https://github.com/digidemic/KatScan`
 
-### Install by importing katscan.aar (Recommended)
-- #### Steps using Android Studio 3.1
->1) Download the katscan.aar (17.9kb as of v1.0.0 file from the KatScan repository.
->2) Launch Android Studio and open the project you wish to add KatScan to.
->3) Expand the `Project` tab the switch the folder structure to `Android`
->4) Find the root most node which in many cases is `app` (This contains the manifest, java, and res directory).
->5) Open the `Project Structure` window using one of two methods: Click to highlight the `app` directory > Press `F4` or right-click the `app` directory > Click `Open Module Settings`.
->6) In the `Project Structure` window, press the green plus button > Scroll and select `Import .JAR/.AAR Package` > Click `Next`.
->7) In the `File name` input box enter the full path of `katscan.aar` from your local machine or click the `...` button to the right of the input box then find and select the `katscan.aar` and press `Finish`.
->8) Click `OK` from within the `Project Structure` with `katscan` added to the `Modules` list.
->9) Expand the `Gradle Scripts` node in the `Project` tab > Locate and select the build.gradle file for `Module: app` (There may be several `build.gradle` files, make sure to find the one with your root node name which is `app` in most cases).
->10) Under the dependencies collection, add the following in a new line: `compile project(path: ':katscan')`
->11) Sync Gradle (A bar at the top of your code should appear giving a link to `Sync Now`).
->12) Your Android project is now ready to use KatScan! Go to the [Syntax](#syntax) section for the next steps on using KatScan in your application!
+### Install with JitPack
+[![](https://jitpack.io/v/Digidemic/katscan.svg)](https://jitpack.io/#Digidemic/katscan)
+1) Add JitPack to your project's root `build.gradle` at the end of `repositories`:
+- ```groovy
+  dependencyResolutionManagement {
+      repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+      repositories {
+          mavenCentral()
+          maven { url 'https://jitpack.io' }
+    }
+  }
+  ```
+2) In the `build.gradle` of the module(s) you wish to use KatScan with, add the following to `dependencies`:
+- ```groovy
+  dependencies {
+      // Required: Installs the .aar without any documentation.
+      implementation 'com.github.digidemic:katscan:1.1.0'
+      
+      // Optional: Displays documentation while writing coding. 
+      implementation 'com.github.digidemic:katscan:1.1.0:javadoc'
+      // Optional: Displays documentation and uncompiled code when stepping into library.
+      implementation 'com.github.digidemic:katscan:1.1.0:sources'
+  }
+  ```
+3) [Sync gradle](https://www.delasign.com/blog/how-to-sync-an-android-project-with-its-gradle-files-in-android-studio/) successfully.
+4) Done! Your Android project is now ready to use KatScan. Go to [Examples](#examples) or [Syntax](#syntax) for KatScan usage!
 
-### Install by Copy/Pasting Kat.java
->1) Choose to download either `Kat.java` or `Kat_(NoJavadoc).java` (42.9kb and 29.2kb respectively as of v1.0.0) file from the KatScan repository.
-Note: `Kat_(NoJavadoc).java` only differs from `Kat.java` by having all its comments and Javadocs removed making the file smaller. Functionality and code-wize it is exactly the same.
->2) Copy the file directly into a valid path of your project (preferably a place where Java files are commonly accessed).
->3) Open the file and update the package name (first line of code) to properly reflect your project's package.
->4) Add the following permission to your manifest: `<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />`
->5) Your Android project is now ready to use KatScan! Go to the [Syntax](#syntax) section for the next steps on using KatScan in your application!
+<br>
 
 ## Syntax
 
 ### Setup / Pre-req call
 
 #### Permissions
->The following permission needs to be added to your project's `Manifest.xml` if not using `katscan.aar`. This permission is needed for KatScan to write to external files.
+If installing with [JitPack installation](https://jitpack.io/#digidemic/kat-scan), this step can be skipped. Otherwise the following permission will need to be added to your module's `Manifest.xml`. This permission is needed for KatScan to write to external files.
 ```xml
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 ```
 
-#### Import
-> Each class using KatScan needs the following import if using `katscan.aar`. If `Kat.java` was copied/pasted into your project instead, the import needs to be the full package name of your defined `Kat.java`.
-```java
-import com.digidemic.katscan.Kat;
-```
+<br>
 
 #### Setup call
-> `Kat.Setup()` is the only pre-req call needed and only called once for the entirety of the application's lifespan. There are 2 overloaded `Kat.Setup()` methods to choose from: One that requires just the class' `Context` to be passed in, the other for the `Context` and to set config `addEntriesIntoSubdirectoryCreatedToday`. Either one of the two (never both) needs to be called before the first `Kat.scan()` call anywhere Context (Or Activity) can be retrieved in your application. Consider passing in an active Activity in place of Context as devices using API 23 (Android Marshmallow) and higher will need to allow the "Storage" permission via popup. Because of this, it is highly recommended to add your `Kat.setup()` call in your main activity's `onCreate()` method passing in `this` for the Context.
-
->For the second parameter, Many would prefer having a main directory sub-folder with all of the current day's `Kat.scan()` entries. To quickly enable this, use the `Kat.Setup()` method using two parameters passing the second parameter as `true`. This can also be turned on by setting `Kat.Config.File.addEntriesIntoSubdirectoryCreatedToday = true`.
+`Kat.setup()` is the only pre-req call needed and needs to be called just once for the entirety of the application's life. `Kat.setup()` needs to be called before the first `Kat.scan()` call anywhere Context (Or Activity) can be retrieved in your application. Consider passing in an active Activity in place of Context as devices using API 23 (Android Marshmallow) and higher will need to allow the "Storage" permission via popup. Because of this, it is highly recommended to add your `Kat.setup()` call in your main activity's `onCreate()` method passing `this` as the setup parameter.
 ```java
 /**
- * Option 1 of 2 for possible setup methods
  * Only needs to be called once in the entire lifespan of the application (recommended to be called in the project's main activity onCreate method).
  * @param context Context instance from the application to determine the application's package name and if the application version is in debug. Activity must be passed in to request the "WRITE_EXTERNAL_STORAGE" to be granted for devices API 23 and higher.
  * @return true if successfully called without error
  */
  Kat.setup(this);
-
- //OR
-
-/**
- * Option 2 of 2 for possible setup methods
- * Only needs to be called once in the entire lifespan of the application (recommended to be called in the project's main activity onCreate method).
- * @param context Context instance from the application to determine the application's package name and if the application version is in debug. Activity must be passed in to request the "WRITE_EXTERNAL_STORAGE" to be granted for devices API 23 and higher.
- * @param addEntriesIntoSubdirectoryCreatedToday If true will add all entries created from Kat.Scan into a subfolder of the current day. Ex: "/storage/emulated/0/KatScan_com.digidemic.katscanexamples/2018-09-30/KatScan_log.txt" rather than "/storage/emulated/0/KatScan_com.digidemic.katscanexamples/KatScan_log.txt"
- * @return true if successfully called without error
- */
- Kat.setup(this, true);
 ```
 
+<br>
+
 ### Main Syntax / Using Kat.scan()
->The main usage of KatScan is by calling `Kat.scan()` methods. There are 6 overloaded methods here allowing each call to write a message, exception stack track, or combination of the two to an external file (KatScan default or user defined file/directory).
+The main usage of KatScan is by calling `Kat.scan()` methods. There are 6 overloaded methods here allowing each call to write a message, exception stack track, or combination of the two to an external file (KatScan default or user defined file/directory).
 ```java
 try{
-    //Some code that throws and Exception
+    //Some code that throws an exception
 } catch(Exception exception) {
     /*
     Kat.scan() which writes to KatScan default file
@@ -136,13 +126,15 @@ try{
     Kat.scan(exception, "Message to prefix the Exception stack trace outputted to default file/path");
 
     /*
-    Kat.scan() which writes to user defined Directory/Files (which will be created at run-time if don't exist)
+    Kat.scan() which writes nested user defined Directory/Files (which will be created at run-time if don't exist)
      */
     Kat.scan("/NewFolder/NewTxtFile", "This String outputted to user defined path: /storage/emulated/0/KatScan_YOUR.PACKAGE.HERE/NewFolder/NewFile.txt");
     Kat.scan("NewFileInMainDirectory", exception);
     Kat.scan("ExceptionFile", exception, "Message to prefix the Exception stack trace outputted to user defined file");
 }
 ```
+
+<br>
 
 ### Config
 `Kat.Config` has all the configurable settings that can be updated at run-time. The following are all public configuration settings set to their default value.
@@ -156,8 +148,9 @@ Kat.Config.File.defaultFileName = "KatScan_log";                //The name of th
 Kat.Config.File.fileExtension = ".txt";                         //The file extension for all Kat.scan() files. This includes all instances including default file and user passed in files.
 Kat.Config.File.lineBreakBetweenEachEntry = false;              //Add a line break between each Kat.scan() entry to the affected file.
 Kat.Config.File.writeKatScanEntriesToFileInsteadOfLog = true;   //Each Kat.scan() call will be written to an external file on the user's device instead of writing to the console.
+Kat.Config.File.writeKatScanEntriesToFileAndLog = true;         //If true, writeKatScanEntriesToFileInsteadOfLog state will not be observed. When true, each Kat.scan() call will be written to an external file on the user's device and  written to the console.
 Kat.Config.File.writeCountWithEveryEntry = false;               //For the lifespan of the running application, each Kat.scan() call increments an internal value by 1 starting with 0. Include this value in the written entry output.
-Kat.Config.File.addEntriesIntoSubdirectoryCreatedToday = false; //NOTE: AN OVERLOADED Kat.setup() METHOD CAN BE CALLED TO ASSIGN THIS VALUE TRUE. | To have each Kat.scan() entry written into a subfolder of the current day within "mainDirectoryName".
+Kat.Config.File.addEntriesIntoSubdirectoryCreatedToday = true;  //To have each Kat.scan() entry written into a subfolder of the current day within "mainDirectoryName".
 
 /*
 Kat.Config.Date
@@ -172,7 +165,7 @@ Kat.Config.InternalErrors
  */
 Kat.Config.InternalErrors.showPermissionGrantedErrorIfOccurs = true;                        //If this error has not yet occurred or has not been displayed to the user's console yet.
 Kat.Config.InternalErrors.showKatScanInternallyCaughtErrors = true;                         //If this error has not yet occurred or has not been displayed to the user's console yet.
-Kat.Config.InternalErrors.showTheSetupErrorAsLogOnceIfNeededRegardlessIfDebugging = true;   //If this error has not yet occurred or has not been displayed to the user's console yet.
+Kat.Config.InternalErrors.showTheSetupErrorAsLogOnceIfNeeded = true;                        //If this error has not yet occurred or has not been displayed to the user's console yet.
 Kat.Config.InternalErrors.showKatScanInternallyCaughtErrorsAsLogsOverPrintln = true;        //If this error has not yet occurred or has not been displayed to the user's console yet.
 Kat.Config.InternalErrors.showKatScanTextInLogsWhenFailureToWriteInFile = true;             //If this error has not yet occurred or has not been displayed to the user's console yet.
 Kat.Config.InternalErrors.loggingMethod = Kat.Config.InternalErrors.LOG_METHOD.DEBUG;       //When anything needs to be logged, whether it be from a KatScan error or a Kat.scan() entry meant for the log, this is the defining log method.
@@ -196,19 +189,24 @@ Kat.Config.isApplicationRunningInDebugMode();           //If KatScan detected th
 Kat.Config.isKatScanEnabled();                          //KatScan is enabled either by "applicationRunningInDebug" being true or "enableKatScanRegardlessIfRunningInDebug" being true
 
 /**
- * Allows the application to enable KatScan to write entries regardless if debug or release, useful for applications released and want a way to manually enable KatScan through the application
- * @param enable enable KatScan regardless of if debug or release
+ * Allows the application to enable KatScan to write entries regardless if debug or release. 
+ * Applies only when writing entries to files, not when writing to logs (that remains debug builds only).
+ * This is can be useful for applications released and want a way to manually enable KatScan through the application.
+ * @param enable enable KatScan for writing to external files regardless if debug or release build.
  */
 Kat.Config.enableKatScanRegardlessIfRunningInDebug(boolean enable);
 
 /**
- * Allows the application to enable KatScan to write entries regardless if debug or release, useful for applications released and want a way to manually enable KatScan through the application
- * @param enable enable KatScan regardless of if debug or release
+ * Allows the application to enable KatScan to write entries regardless if debug or release. 
+ * Applies only when writing entries to files, not when writing to logs (that remains debug builds only).
+ * This is can be useful for applications released and want a way to manually enable KatScan through the application.
+ * @param enable enable KatScan for writing to external files regardless if debug or release build.
  * @param activity pass in the application's Activity instance if device needs to grant Storage permissions still.
  */
 Kat.Config.enableKatScanRegardlessIfRunningInDebug(boolean enable, Activity activity);
 ```
 
+<br>
 
 ## Versioning
 - [SemVer](http://semver.org/) is used for versioning.
@@ -217,9 +215,22 @@ Kat.Config.enableKatScanRegardlessIfRunningInDebug(boolean enable, Activity acti
     2) MINOR version - Functionality added in a backwards-compatible manner.
     3) PATCH version - Backwards-compatible bug fixes.
 
-## Author
-KatScan created by Adam Steinberg of DIGIDEMIC, LLC
+<br>
 
 ## License
-- KatScan licensed under **[Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0)**
-- Copyright 2018 © <a href="http://digidemicsoftware.com/">DIGIDEMIC, LLC</a>.
+KatScan created by Adam Steinberg of DIGIDEMIC, LLC
+```
+Copyright 2024 DIGIDEMIC, LLC
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
