@@ -78,7 +78,8 @@ Kat.scan("This custom message was written using a new thread.");
       
       // Optional: Displays documentation while writing coding. 
       implementation 'com.github.digidemic:katscan:1.1.0:javadoc'
-      // Optional: Displays documentation (in some cases more comprehensive) and uncompiled code when stepping into library.
+  
+      // Optional: Displays documentation (more comprehensive than javadoc in some cases) and uncompiled code when stepping into library.
       implementation 'com.github.digidemic:katscan:1.1.0:sources'
   }
   ```
