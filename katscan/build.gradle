@@ -1,0 +1,76 @@
+plugins {
+    alias(libs.plugins.android.library)
+    id 'maven-publish'
+}
+
+android {
+    namespace 'com.digidemic.katscan'
+    compileSdk 34
+
+    defaultConfig {
+        minSdk 4
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    publishing {
+        singleVariant("release") {
+            withJavadocJar()
+        }
+    }
+}
+
+dependencies {
+
+}
+
+afterEvaluate {
+    android.libraryVariants.each {variant ->
+        publishing.publications.create(variant.name, MavenPublication){
+            from components.findByName(variant.name)
+
+            groupId = 'com.github.katscan'
+            artifactId = "katscan"
+            version = '1.1.0'
+
+            pom {
+                name = 'KatScan'
+                description = 'Write timestamped logs, exceptions, stack traces, or any form of text to a file for Android debugging purposes'
+                url = 'https://github.com/Digidemic/kat-scan'
+
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'Digidemic'
+                        name = 'Adam Steinberg'
+                        email = 'digidemic@gmail.com'
+                    }
+                }
+
+                scm {
+                    connection = 'scm:git://github.com/Digidemic/katscan.git'
+                    developerConnection = 'scm:git://github.com/Digidemic/katscan.git'
+                    url = 'git://github.com/Digidemic/katscan.git'
+                }
+            }
+        }
+    }
+}
