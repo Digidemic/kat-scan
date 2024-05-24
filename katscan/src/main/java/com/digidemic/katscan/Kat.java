@@ -1,6 +1,6 @@
 /**
  * KatScan v1.1.0 - https://github.com/Digidemic/kat-scan
- * (c) 2021 DIGIDEMIC, LLC - All Rights Reserved
+ * (c) 2024 DIGIDEMIC, LLC - All Rights Reserved
  * KatScan developed by Adam Steinberg of DIGIDEMIC, LLC
  * License: Apache License 2.0
  *
